@@ -1,0 +1,13 @@
+name: foci-analysis
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - scikit-image
+  - tqdm
+  - pip
+  - pip:
+      - opencv-python-headless
