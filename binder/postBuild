@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Create the results directory
+#  ensures Python has a place to save the CSV 
+mkdir -p results
+
+# Set Permissions
+# makes the results folder # fully open for the analysis scripts.
+chmod -R 777 results
+
+# Pre-flight check
+# This prints a message in the build logs so you know it worked.
+echo "Results directory initialized and permissions set."
+
+import requests, zipfile, io, os
+url = 'https://data.broadinstitute.org/bbbc/BBBC005/BBBC005_v1_images.zip'
+print('Fetching 300 images from Broad Institute...')
+r = requests.get(url)
+with zipfile.ZipFile(io.BytesIO(r.content)) as z:
+    # Filter for the first 300 TIFF files
+    all_files = [f for f in z.namelist() if f.endswith(('.TIF', '.tif'))][:300]
+    os.makedirs('data', exist_ok=True)
+    for f in all_files:
+        z.extract(f, 'data')
+print('Success: 300 images are now in the /data folder.')
+"
