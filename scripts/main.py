@@ -1,7 +1,7 @@
 import os
 import subprocess
 import shutil
-from processor import run_analysis_pipeline
+from processor import run_analysis_pipeline, generate_report_figure
 
 def main():
     print("Starting Foci Analysis Pipeline")

@@ -7,6 +7,43 @@ from skimage import io, filters, morphology
 from scipy import ndimage as ndi
 from skimage.feature import peak_local_max
 from skimage.segmentation import watershed
+import matplotlib.pyplot as plt
+
+
+def generate_report_figure(image_path):
+    """
+    Generates a high-quality side-by-side comparison for the technical supplement.
+    """
+    # Use your existing logic to get the labels
+    raw_image = io.imread(image_path, as_gray=True)
+    denoised = filters.gaussian(raw_image, sigma=1)
+    thresh = filters.threshold_otsu(denoised)
+    binary = denoised > thresh
+    cleaned = morphology.remove_small_objects(binary, min_size=25)
+    distance = ndi.distance_transform_edt(cleaned)
+    coords = peak_local_max(distance, min_distance=3, labels=cleaned)
+
+    mask = np.zeros(distance.shape, dtype=bool)
+    mask[tuple(coords.T)] = True
+    markers, _ = ndi.label(mask)
+    labels = watershed(-distance, markers, mask=cleaned)
+
+    # Plotting
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+    ax1.imshow(raw_image, cmap='gray')
+    ax1.set_title("Microscopy (Channel W2)", fontsize=14)
+    ax1.axis('off')
+
+    # Color each nucleus differently to show individual segmentation
+    ax2.imshow(labels, cmap='nipy_spectral')
+    ax2.set_title(f"Watershed Results: {len(np.unique(labels)) - 1} Cell(s) Detected", fontsize=14)
+    ax2.axis('off')
+
+    plt.tight_layout()
+    plt.savefig("validation_figure.png", dpi=300)
+    print("\n[SUCCESS] Report figure saved as 'validation_figure.png'")
+    plt.show()
 
 # Setup & Configuration
 warnings.filterwarnings("ignore")
