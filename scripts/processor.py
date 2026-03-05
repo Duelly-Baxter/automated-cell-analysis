@@ -18,7 +18,7 @@ def process_single_image(path):
     """
     raw_image = io.imread(path, as_gray=True)
 
-    # Subtle Denoising (Keeps edges sharper than sigma=2)
+    # Subtle Denoising
     denoised = filters.gaussian(raw_image, sigma=1)
 
     # Thresholding

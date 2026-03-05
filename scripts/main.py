@@ -28,9 +28,8 @@ def main():
     try:
         r_cmd = "Rscript"
 
-        # On Binder, 'Rscript' will be in the PATH automatically
         if not shutil.which(r_cmd):
-            # This is your local fallback; Binder will ignore this
+            # This is local fallback; Binder will ignore this
             r_cmd = r"C:\Program Files\R\R-4.4.1\bin\Rscript.exe"
 
         # Point directly to analysis.R in the scripts folder
