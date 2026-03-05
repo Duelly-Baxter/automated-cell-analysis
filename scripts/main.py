@@ -1,54 +1,12 @@
 import os
-import requests
-import tarfile
 import subprocess
 import shutil
 from processor import run_analysis_pipeline
-
-
-def download_dataset(url, extract_path):
-    """Downloads and extracts the dataset if not present."""
-    archive_name = "data.tar"
-
-    print(f"Step 0: Data Acquisition")
-    print(f"Downloading 63.2 MB dataset from GitHub Releases...")
-
-    try:
-        response = requests.get(url, stream=True)
-        response.raise_for_status()  # Check for 404/500 errors
-
-        with open(archive_name, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-
-        print(f"Extracting files to {extract_path}...")
-        with tarfile.open(archive_name, "r:gz") as tar:
-            tar.extractall(path=extract_path)
-
-        os.remove(archive_name)  # Clean up the .tar.gz
-        print("Data successfully prepared.\n")
-
-    except Exception as e:
-        print(f"Critical Error during download: {e}")
-        return False
-    return True
 
 def main():
     print("Starting Foci Analysis Pipeline")
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-    # The Direct Download URL from your GitHub Release
-    DATA_URL = "https://github.com/Duelly-Baxter/automated-foci-analysis/releases/download/data/data.tar"
-
-    # Check/Download Data
-    if not os.path.exists(input_folder) or not os.listdir(input_folder):
-        print(f"Data folder not found or empty.")
-        success = download_dataset(DATA_URL, BASE_DIR)
-        if not success:
-            return
-    else:
-        print("Check: Data folder found. Skipping download.\n")
 
     # Run the Python Processor
     # Looking for 'data' in the project root
@@ -70,7 +28,6 @@ def main():
         r_cmd = "Rscript"
 
         if not shutil.which(r_cmd):
-            # This is local fallback; Binder will ignore this
             r_cmd = r"C:\Program Files\R\R-4.4.1\bin\Rscript.exe"
 
         # Point directly to analysis.R in the scripts folder
